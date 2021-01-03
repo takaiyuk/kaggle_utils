@@ -7,6 +7,7 @@ networkx
 nltk
 node2vec
 numpy
+opencv-contrib-python
 pandas
 Pillow
 scikit-image
