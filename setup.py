@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def _requires_from_file(filename):
@@ -6,10 +6,10 @@ def _requires_from_file(filename):
 
 
 setup(
-    name='kaggle_utils',
-    version='0.0.1',
+    name="kaggle_utils",
+    version="0.0.2",
     packages=find_packages(),
-    install_requires=_requires_from_file('requirements.txt'),
-    description='utility scripts for kaggle',
-    author='Yuki Nakatsuka',
+    install_requires=_requires_from_file("requirements.txt"),
+    description="utility scripts for kaggle",
+    author="Yuki Nakatsuka",
 )
