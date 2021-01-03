@@ -79,6 +79,9 @@ class BaseGroupByTransformer(BaseFeatureTransformer):
     def get_numerical_features(self):
         return self.get_feature_names()
 
+    def get_features(self):
+        return self.features
+
 
 class GroupbyTransformer(BaseGroupByTransformer):
     """
