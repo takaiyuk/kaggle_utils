@@ -1,3 +1,6 @@
+from dataclasses import asdict, dataclass, field
+from typing import Dict, List
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import BaseCrossValidator
@@ -6,9 +9,16 @@ from ..utils import change_dtype
 from .base import BaseFeatureTransformer
 
 
+@dataclass
+class GroupByParams:
+    key: List[str] = field(default_factory=lambda: [""])
+    var: List[str] = field(default_factory=lambda: [""])
+    agg: List[str] = field(default_factory=lambda: [""])
+
+
 class BaseGroupByTransformer(BaseFeatureTransformer):
-    def __init__(self, param_dict=None):
-        self.param_dict = param_dict
+    def __init__(self, params_data: GroupByParams = None):
+        self.param_dict: Dict[str, List[str]] = asdict(params_data)
         self.features = []
         self.fitted = False
 
@@ -74,13 +84,11 @@ class GroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['channel'],
-                'agg': ['count', 'nunique', 'cumcount']
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['channel'],
+            agg=['count', 'nunique', 'cumcount']
+        )
     """
 
     def _aggregate(self, dataframe):
@@ -265,12 +273,10 @@ class LagGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['time'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['time'],
+        )
     """
 
     def __init__(self, param_dict=None, shift=1, fill_na=-1, sort_features=None):
@@ -318,12 +324,10 @@ class RatioLagGroupbyTransformer(LagGroupbyTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['time'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['time'],
+        )
     """
 
     def __init__(self, param_dict=None, shift=1, fill_na=-1, sort_features=None):
@@ -361,12 +365,10 @@ class CategoryLagGroupbyTransformer(LagGroupbyTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['device'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['device'],
+        )
     """
 
     def __init__(self, param_dict=None, shift=1, fill_na=-1, sort_features=None):
@@ -403,12 +405,10 @@ class CategoryShareGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['day'],
-                'var': ['device'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['day'],
+            var=['device'],
+        )
     """
 
     def __init__(self, param_dict=None, shift=1, fill_na=-1, sort_features=None):
@@ -447,13 +447,11 @@ class PrevCategoryShareGroupbyTransformer(CategoryShareGroupbyTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['day'],
-                'var': ['device'],
-                'on': ['prev_day'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['day'],
+            var=['device'],
+            agg=['prev_day']
+        )
     """
 
     def __init__(self, param_dict=None, shift=1, fill_na=-1, sort_features=None):
@@ -480,7 +478,7 @@ class CategoryShareRankGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
+        params_data = [
             {
                 'key': ['day'],
                 'var': ['device'],
@@ -525,12 +523,10 @@ class EWMGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['time'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'time'],
+            var=['time'],
+        )
     """
 
     def __init__(self, param_dict=None, alpha=0.5, fill_na=-1, sort_features=None):
@@ -577,12 +573,10 @@ class BayesianMeanGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['time'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['time'],
+        )
     """
 
     def __init__(self, param_dict=None, l=10):
@@ -629,12 +623,10 @@ class TargetEncodingTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'agg': ['mean', 'max']
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            agg=['mean', 'max']
+        )
     """
 
     def __init__(
@@ -720,11 +712,9 @@ class BayesianTargetEncodingTransformer(TargetEncodingTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+        )
     """
 
     def __init__(self, target, n_splits, cvfold, len_train, l=100, param_dict=None):
@@ -759,11 +749,9 @@ class Seq2DecTargetEncodingTransformer(TargetEncodingTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+        )
     """
 
     def __init__(self, target, n_splits, cvfold, len_train, param_dict=None):
@@ -827,11 +815,9 @@ class EWMTargetEncodingTransformer(TargetEncodingTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+        )
     """
 
     def __init__(
@@ -906,12 +892,10 @@ class TopFrequencyGroupbyTransformer(BaseGroupByTransformer):
     """
         Example
         -------
-        param_dict = [
-            {
-                'key': ['ip','hour'],
-                'var': ['time'],
-            }
-        ]
+        params_data = GroupByParams(
+            key=['ip', 'hour'],
+            var=['time'],
+        )
     """
 
     def __init__(self, param_dict=None):
