@@ -82,6 +82,9 @@ class BaseGroupByTransformer(BaseFeatureTransformer):
     def get_features(self):
         return self.features
 
+    def get_keys(self):
+        return [d["key"] for d in self.param_dict]
+
 
 class GroupbyTransformer(BaseGroupByTransformer):
     """
