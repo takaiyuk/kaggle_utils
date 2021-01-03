@@ -14,17 +14,30 @@ class CategoricalEncoder(BaseFeatureTransformer):
         self.maxvalue_dict = {}
 
     def transform(self, dataframe):
+        dataframe_ = dataframe.copy()
         if self.categorical_feature is None:
             self.categorical_feature = [
-                col for col in dataframe.columns if dataframe[col].dtype == "object"
+                col for col in dataframe_.columns if dataframe_[col].dtype == "object"
             ]
         for c in self.categorical_feature:
-            dataframe[c], uniques = pd.factorize(dataframe[c])
-            self.maxvalue_dict[c] = dataframe[c].max() + 1
-        return dataframe
+            dataframe_[f"{c}_encoded"], uniques = pd.factorize(dataframe_[c])
+            self.maxvalue_dict[c] = dataframe_[f"{c}_encoded"].max() + 1
+        return dataframe_
 
     def get_categorical_features(self):
         return self.categorical_feature
+
+    def get_features(self, dataframe):
+        dataframe_ = dataframe.copy()
+        if self.categorical_feature is None:
+            self.categorical_feature = [
+                col for col in dataframe_.columns if dataframe_[col].dtype == "object"
+            ]
+        for c in self.categorical_feature:
+            dataframe_[f"{c}_encoded"], uniques = pd.factorize(dataframe_[c])
+            feature = dataframe_.loc[:, [c, f"{c}_encoded"]].drop_duplicates()
+            self.features.append(feature)
+        return self.features
 
 
 class OOFCategoryEncoder(BaseFeatureTransformer):
