@@ -17,8 +17,8 @@ class GroupByParams:
 
 
 class BaseGroupByTransformer(BaseFeatureTransformer):
-    def __init__(self, params_data: GroupByParams = None):
-        self.param_dict: Dict[str, List[str]] = asdict(params_data)
+    def __init__(self, params_data: List[GroupByParams] = None):
+        self.param_dict = [asdict(p()) for p in params_data]
         self.features = []
         self.fitted = False
 
